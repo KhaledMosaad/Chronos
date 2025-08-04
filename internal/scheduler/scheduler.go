@@ -8,14 +8,14 @@ import (
 )
 
 type Scheduler struct {
-	tasks    chan task.Tasker
+	tasks    chan task.Taskable
 	workers  int
 	stopChan chan struct{}
 }
 
 func NewSchedular(workers int, taskBuffer int) *Scheduler {
 	s := &Scheduler{
-		tasks:    make(chan task.Tasker, taskBuffer),
+		tasks:    make(chan task.Taskable, taskBuffer),
 		workers:  workers,
 		stopChan: make(chan struct{}),
 	}
@@ -25,17 +25,13 @@ func NewSchedular(workers int, taskBuffer int) *Scheduler {
 }
 
 func (s *Scheduler) Start() {
+	ctx := context.Background()
 	for i := 0; i < s.workers; i++ {
 		go func() {
 			for { // loop until take a task or stopChan invoked
 				select {
 				case t := <-s.tasks:
-					if ct, ok := t.(task.CrawlTask); ok {
-						ctx := context.Background()
-						ct.Execute(ctx)
-						fmt.Printf("Task: %s Done\n", ct.ID)
-
-					}
+					t.Execute(ctx)
 				case <-s.stopChan:
 					return
 				}
@@ -44,7 +40,7 @@ func (s *Scheduler) Start() {
 	}
 }
 
-func (s *Scheduler) Submit(task task.Tasker) {
+func (s *Scheduler) Submit(task task.Taskable) {
 	s.tasks <- task
 }
 

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type Tasker interface {
+type Taskable interface {
 	Execute(ctx context.Context) error
 }
 
@@ -19,5 +19,6 @@ type CrawlTask struct {
 
 func (t CrawlTask) Execute(ctx context.Context) error {
 	fmt.Println("Executing task ", t.ID)
+	fmt.Printf("Task: %s Done\n", t.ID)
 	return nil
 }

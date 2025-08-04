@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -19,7 +18,7 @@ func main() {
 	defer s.Stop()
 
 	for j := 1; j <= 10; j++ {
-		task := task.CrawlTask{
+		var task task.Taskable = task.CrawlTask{
 			ID:       fmt.Sprintf("Task: %d", j),
 			Priority: 1,
 			Timeout:  1 * time.Second,
@@ -29,8 +28,4 @@ func main() {
 	}
 	<-sigs
 	fmt.Println("Exiting the app")
-}
-
-func Exec(ctx context.Context) error {
-	return nil
 }

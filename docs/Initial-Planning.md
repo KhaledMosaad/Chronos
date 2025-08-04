@@ -36,7 +36,7 @@ type Schedular struct {
 
 ```go
 type Tasker interface {
-  Execute(params map[string]any, ctx context.Context)
+  Execute(ctx context.Context)
 }
 
 type Task struct {
